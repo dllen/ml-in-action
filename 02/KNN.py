@@ -2,6 +2,8 @@
 
 from numpy import *
 import operator
+import matplotlib
+import matplotlib.pyplot as plt
 
 
 def create_date_set():
@@ -71,6 +73,26 @@ def auto_norm(data_set):
     return norm_data_set, ranges, min_vals
 
 
+def classify_person():
+    result_list = ['not at all', 'in small doses' 'in large doses']
+    percent_tats = float(raw_input("percentage of time spent playing video games?"))
+    ff_miles = float(raw_input("frequent flier miles earned per year?"))
+    ice_cream = float(raw_input("liters of ice cream consumed per year?"))
+    data_set, data_labels = file_to_matrix("datingTestSet2.txt")
+    norm_mat, ranges, min_vals = auto_norm(data_set)
+    in_arr = array([ff_miles, percent_tats, ice_cream])
+    classifier_result = classify((in_arr - min_vals) / ranges, norm_mat, data_labels, 3)
+    print "You will probably like this person: ", result_list[classifier_result - 1]
+
+
+def show_plot():
+    data_set, data_labels = file_to_matrix('datingTestSet2.txt')
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.scatter(data_set[:, 1], data_set[:, 2], 15.0 * array(data_labels), 15.0 * array(data_labels))
+    plt.show()
+
+
 def test():
     ho_ratio = 0.10
     data_mat, data_labels = file_to_matrix('datingTestSet2.txt')
@@ -81,12 +103,16 @@ def test():
     for i in range(num_test_vecs):
         classifier_result = classify(norm_mat[i, :], norm_mat[num_test_vecs:m, :], data_labels[num_test_vecs:m], 3)
         print "the classifier came back with: %d, the real answer is: %d" % (classifier_result, data_labels[i])
-        if (classifier_result != data_labels[i]): error_count += 1.0
+        if (classifier_result != data_labels[i]):
+            error_count += 1.0
 
     print "the total error rate is: %f" % (error_count / float(num_test_vecs))
 
 
-test()
+# test()
+# show_plot()
+
+classify_person()
 
 # group, labels = create_date_set()
 # print_split_line()
